@@ -5,6 +5,7 @@ import edu.upc.dsa.orm.FactorySession;
 import edu.upc.dsa.orm.dao.UserDAO;
 import edu.upc.dsa.orm.dao.UserDAOImpl;
 import edu.upc.dsa.orm.Session;
+import edu.upc.dsa.models.levels;
 
 
 import java.util.List;
@@ -32,6 +33,31 @@ public class UserDAOImpl implements UserDAO {
         }
         else {
             return id;
+        }
+
+    }
+
+    @Override
+    public String addLevel(String levelName, String level) {
+        Session session = null;
+        int result = 0;
+        try {
+            session = FactorySession.openSession();
+            levels Level = new levels(levelName, level);
+            result = session.save(Level);
+        }
+        catch (Exception e) {
+            return "Error";
+        }
+        finally {
+            session.close();
+        }
+
+        if (result == -1) {
+            return "Error";
+        }
+        else {
+            return "Correct";
         }
 
     }

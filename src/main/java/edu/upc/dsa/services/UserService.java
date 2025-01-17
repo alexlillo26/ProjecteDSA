@@ -398,6 +398,26 @@ public class UserService extends Application {
 
     }
 
+   @POST
+@ApiOperation(value = "post partida", notes = "asdasd")
+@ApiResponses(value = {
+        @ApiResponse(code = 201, message = "Successful"),
+        @ApiResponse(code = 500, message = "Validation Error")
+})
+@Path("/partidas")
+@Consumes(MediaType.APPLICATION_JSON)
+public Response saveGame(String level) {
+    levels level1 = new levels("level1", level);
+    try {
+        String result = userDAO.addLevel(level1.getLevelName(), level1.getLevelData());
+        if(result.equals("Error")) return Response.status(500).entity("{\"message\": \"Validation Error\"}").build();
+
+        return Response.status(201).entity("{\"message\": \"Level created successfully\"}").build();
+    } catch (Exception e) {
+        logger.error("Error creating level: " + e.getMessage(), e);
+        return Response.status(500).entity("{\"message\": \"Internal server error\"}").build();
+    }
+}
 
 
     @POST
@@ -412,9 +432,6 @@ public class UserService extends Application {
 
         User dbUser = userDAO.getUserbyName(user);
 
-        if (dbUser == null ) {
-
-        }
 
         if (dbUser == null || !user.getPassword().equals(dbUser.getPassword())) {
             logger.warn("Credenciales incorrectas para el usuario: " + user.getUsername());
