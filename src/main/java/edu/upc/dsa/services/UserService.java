@@ -79,9 +79,9 @@ public class UserService extends Application {
         }
 
         String sql = "SELECT i.id as itemId, i.name, i.description, i.price, i.imageUrl, SUM(ui.quantity) as totalQuantity " +
-                "FROM user u " +
-                "JOIN user_item ui ON u.id = ui.user_id " +
-                "JOIN item i ON ui.item_id = i.id " +
+                "FROM User u " +
+                "JOIN User_Item ui ON u.id = ui.user_id " +
+                "JOIN Item i ON ui.item_id = i.id " +
                 "WHERE u.username = ? " +
                 "GROUP BY i.id";
 
