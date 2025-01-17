@@ -133,7 +133,7 @@
         <div class="dropdown-menu">
             <a href="profile.html">Ver Perfil</a>
             <a href="tienda.xml.html">Tienda</a>
-            <a href="http://localhost:8080/user.html">Inicio</a>
+            <a href="/dsaApp/user.html">Inicio</a>
             <a href="#" id="logoutButton" style="color: #dc3545;">Cerrar Sesión</a>
         </div>
     </div>
@@ -179,7 +179,7 @@
       document.getElementById("logoutButton").addEventListener("click", (event) => {
         event.preventDefault();
         localStorage.clear();
-        window.location.href = "http://localhost:8080/";
+        window.location.href = "/dsaApp/";
       });
 
       document.addEventListener("click", (event) => {
@@ -197,12 +197,12 @@
     // Verificamos si el usuario está autenticado
     if (!username) {
         console.warn("No username found in localStorage, redirecting to login page.");
-        window.location.href = "http://localhost:8080/";
+        window.location.href = "/dsaApp/";
         return;
     }
 
     try {
-        const response = await fetch(`http://localhost:8080/dsaApp/users/inventories/${username}`);
+        const response = await fetch(`/dsaApp/users/inventories/${username}`);
 
         // Verificamos el estado de la respuesta
         if (!response.ok) {
