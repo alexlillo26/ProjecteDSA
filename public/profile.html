@@ -101,7 +101,7 @@
                 profilePicture: profilePictureUrl // Incluir la URL de la foto de perfil en los datos del perfil
             };
 
-            fetch(`http://localhost:8080/dsaApp/users/${username}/profile`, {
+            fetch(`/dsaApp/users/${username}/profile`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json'
@@ -140,7 +140,7 @@
             const username = $('#deleteUsername').val();
             const password = $('#deletePassword').val();
 
-            fetch(`http://localhost:8080/dsaApp/users/${username}`, {
+            fetch(`/dsaApp/users/${username}`, {
                 method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json',
