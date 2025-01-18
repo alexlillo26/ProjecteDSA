@@ -101,6 +101,23 @@ public class UserDAOImpl implements UserDAO {
         }
         return user;
     }
+    @Override
+    public levels getlevel(String name)
+    {
+        Session session = null;
+        levels level = null;
+        try {
+            session = FactorySession.openSession();
+            level = (levels) session.get(levels.class, name);
+        } catch (Exception e) {
+            // LOG
+        } finally {
+            if (session != null) {
+                session.close();
+            }
+        }
+        return level;
+    }
 
     @Override
     public User getUserbyName(User userprovided) {
@@ -117,6 +134,28 @@ public class UserDAOImpl implements UserDAO {
             }
         }
         return user;
+    }
+
+    public void updateUserPartida(String name, String partida)
+    {
+        Session session = null;
+        int result;
+        try {
+            session = FactorySession.openSession();
+            User user = (User) session.getbyName(User.class, name);
+            if (user != null) {
+                user.setPartida(partida);
+                session.update(user);
+                result = 1;
+            }
+        } catch (Exception e) {
+            // LOG
+            result = -1;
+        } finally {
+            if (session != null) {
+                session.close();
+            }
+        }
     }
 
     @Override

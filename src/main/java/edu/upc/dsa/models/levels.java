@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import edu.upc.dsa.annotations.CustomAnnotation;
 
 public class levels {
-    private String levelName;
+    private String ID;
     private String levelData; // Stored as a JSON string
 
     // ObjectMapper instance for JSON validation
@@ -14,17 +14,21 @@ public class levels {
 
     // Constructor
     public levels(String levelName, String levelData) throws IllegalArgumentException {
-        this.levelName = levelName;
+        this.ID = levelName;
         setLevelData(levelData); // Validate and set levelData
+    }
+    public levels() {
+        this.ID = "";
+        this.levelData = "";
     }
 
     // Getter and Setter for levelName
-    public String getLevelName() {
-        return levelName;
+    public String getID() {
+        return ID;
     }
 
-    public void setLevelName(String levelName) {
-        this.levelName = levelName;
+    public void setID(String levelName) {
+        this.ID = levelName;
     }
 
     // Getter and Setter for levelData
@@ -53,7 +57,7 @@ public class levels {
     @Override
     public String toString() {
         return "Level{" +
-                "levelName='" + levelName + '\'' +
+                "levelName='" + ID + '\'' +
                 ", levelData='" + levelData + '\'' +
                 '}';
     }

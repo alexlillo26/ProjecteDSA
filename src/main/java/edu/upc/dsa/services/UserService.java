@@ -242,6 +242,46 @@ public class UserService extends Application {
         return Response.status(Response.Status.OK).entity(user).build();
     }
 
+
+    @GET
+    @ApiOperation(value = "get a User Partida", notes = "asdasd")
+    @ApiResponses(value = {
+            @ApiResponse(code = 201, message = "Successful"),
+            @ApiResponse(code = 404, message = "User not found")
+    })
+    @Path("/{username}/partidas")
+    @Produces(MediaType.TEXT_PLAIN)
+    public Response getGame(@PathParam("username") String username) {
+        User user = userDAO.getUserbyName(new User(username, null, null));
+        if (user == null) {
+            if (username.equals("Solicitud_de_partida_001") || username.equals("Solicitud_de_partida_002") || username.equals("Solicitud_de_partida_003")) {
+                String level;
+                if (username.equals("Solicitud_de_partida_001")) {
+                    level = "level1";
+                } else if (username.equals("Solicitud_de_partida_002")) {
+                    level = "level2";
+                } else {
+                    level = "level3";
+                }
+                levels Level = new levels();
+                Level.setLevelData(userDAO.getlevel(level).getLevelData());
+                return Response.status(Response.Status.OK).entity(Level.getLevelData()).build();
+            }
+            logger.warn("Usuario no encontrado: " + username);
+            return Response.status(Response.Status.NOT_FOUND)
+                    .entity("{\"message\": \"Usuario no encontrado\"}")
+                    .build();
+        }
+        if(user.getPartida() == "") {
+            return Response.status(Response.Status.OK).entity("").build();
+        }
+        else {
+            return Response.status(Response.Status.OK).entity(user.getPartida()).build();
+        }
+
+    }
+
+
     @DELETE
     @ApiOperation(value = "delete a User", notes = "Elimina un usuario específico si es un administrador")
     @ApiResponses(value = {
@@ -407,17 +447,49 @@ public class UserService extends Application {
 @Path("/partidas")
 @Consumes(MediaType.APPLICATION_JSON)
 public Response saveGame(String level) {
-    levels level1 = new levels("level1", level);
-    try {
-        String result = userDAO.addLevel(level1.getLevelName(), level1.getLevelData());
-        if(result.equals("Error")) return Response.status(500).entity("{\"message\": \"Validation Error\"}").build();
 
-        return Response.status(201).entity("{\"message\": \"Level created successfully\"}").build();
+       if (level.startsWith("\"")) {
+           level = level.substring(1);
+       }
+       if (level.endsWith("\"")) {
+           level = level.substring(0, level.length() - 1);
+       }
+
+        String[] partes = level.split("\\|");
+       level = cleanJsonString(partes[1]);
+       String parte1 = partes[0];
+       String parte2 = level;
+
+
+    levels level1 = new levels("level1", parte2);
+    try{
+        userDAO.updateUserPartida(parte1, parte2);
+        return Response.status(500).entity("{\"message\": \"Validation Error\"}").build();
+
     } catch (Exception e) {
         logger.error("Error creating level: " + e.getMessage(), e);
         return Response.status(500).entity("{\"message\": \"Internal server error\"}").build();
     }
+
+
 }
+    public String cleanJsonString(String input) {
+        // Verifica si el string comienza con el prefijo "q|"
+        if (input.startsWith("q|")) {
+            input = input.substring(2); // Elimina las dos primeras letras "q|"
+        }
+
+        // Verifica si el string comienza y termina con comillas dobles
+        if (input.startsWith("\"") && input.endsWith("\"")) {
+            input = input.substring(1, input.length() - 1); // Elimina las comillas iniciales y finales
+        }
+
+        // Reemplaza los caracteres de escape innecesarios (\n, \")
+        input = input.replace("\\n", "")  // Elimina saltos de línea escapados
+                .replace("\\\"", "\""); // Corrige las comillas escapadas
+
+        return input.trim(); // Devuelve el string limpio y sin espacios innecesarios
+    }
 
 
     @POST

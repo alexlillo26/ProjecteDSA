@@ -15,6 +15,7 @@ public class User {
     private int age;
     private String profilePicture;
     private int coins;
+    private String partida;
 
 
     public User() {
@@ -30,14 +31,17 @@ public class User {
         this.isAdmin = isAdmin;
     }
 
-    public User(String username, String password, String isAdmin, String fullName, String email, int age, String profilePicture, int coins) {
+    public User(String username, String password, String isAdmin, String fullName, String email, int age, String profilePicture, int coins, String partida) {
         this(username, password, isAdmin);
         this.fullName = fullName;
         this.email = email;
         this.age = age;
         this.profilePicture = profilePicture;
         this.coins = coins;
+        this.partida = partida;
     }
+
+
 
     // Getters and Setters
     public String getIsAdmin() {
@@ -110,6 +114,14 @@ public class User {
 
     public void setCoins(int coins) {
         this.coins = coins;
+    }
+
+    public String getPartida() {
+        return partida;
+    }
+
+    public void setPartida(String partida) {
+        this.partida = partida;
     }
 
     public boolean isValidPassword(String password) {
