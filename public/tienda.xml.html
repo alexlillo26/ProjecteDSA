@@ -132,7 +132,7 @@
     <button class="menu-button">Menú</button>
     <div class="dropdown-menu">
       <a href="profile.html">Ver Perfil</a>
-      <a href="/dsaApp/user.html">Inicio</a>
+      <a href="http://localhost:8080/user.html">Inicio</a>
       <a href="#" id="logoutButton" style="color: #dc3545;">Cerrar Sesión</a>
     </div>
   </div>
@@ -199,7 +199,7 @@
     document.getElementById("logoutButton").addEventListener("click", (event) => {
       event.preventDefault();
       localStorage.clear();
-      window.location.href = "/dsaApp/";
+      window.location.href = "http://localhost:8080/";
     });
 
     document.addEventListener("click", (event) => {
@@ -224,7 +224,7 @@
 
   async function fetchItems() {
     try {
-      const response = await fetch('/dsaApp/store');
+      const response = await fetch("http://localhost:8080/dsaApp/store");
       const items = await response.json();
       const tableBody = document.getElementById("itemsTableBody");
       tableBody.innerHTML = "";
@@ -301,7 +301,7 @@
       quantity: quantity
     };
 
-    const response = await fetch('/dsaApp/users/purchase', {
+    const response = await fetch("http://localhost:8080/dsaApp/users/purchase", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

@@ -49,7 +49,7 @@
 
            if (userRole !== 'admin') {
                // Si no es admin, redirigir a una página de acceso denegado o inicio
-               window.location.href = '/dsaApp/'; // Redirige al inicio
+               window.location.href = 'http://localhost:8080/dsaApp/'; // Redirige al inicio
            }
        };
  function logout() {
@@ -58,7 +58,7 @@
              localStorage.removeItem('role');
 
              // Redirigir a la página de inicio o login
-             window.location.href = '/dsaApp/';  // Cambia la URL por la de tu página de inicio o login
+             window.location.href = 'http://localhost:8080';  // Cambia la URL por la de tu página de inicio o login
          }
    // Función para crear un nuevo usuario
    document.getElementById('createUserForm').addEventListener('submit', function(event) {
@@ -67,7 +67,7 @@
        const password = document.getElementById('newPassword').value;
        const isAdmin = document.getElementById('isAdmin').checked ? 'admin' : 'notadmin';
 
-       fetch('/dsaApp/users', {
+       fetch('http://localhost:8080/dsaApp/users', {
            method: 'POST',
            headers: { 'Content-Type': 'application/json' },
            body: JSON.stringify({ username, password, isAdmin })
@@ -88,7 +88,7 @@
        const username = document.getElementById('manageUsername').value;
        const setAdmin = document.getElementById('setAdmin').checked ? 'admin' : 'notadmin';
 
-       fetch(`/dsaApp/users/${username}`, {
+       fetch(`http://localhost:8080/dsaApp/users/${username}`, {
            method: 'PUT',
            headers: { 'Content-Type': 'application/json' },
            body: JSON.stringify({ isAdmin: setAdmin })
@@ -105,7 +105,7 @@
 
    // Función para listar todos los usuarios
  function fetchUsers() {
-     fetch('/dsaApp/users', {
+     fetch('http://localhost:8080/dsaApp/users', {
          method: 'GET',
          headers: { 'Content-Type': 'application/json' }
      })
@@ -138,7 +138,7 @@
          return;
      }
 
-     fetch(`/dsaApp/users/${username}`, {
+     fetch(`http://localhost:8080/dsaApp/users/${username}`, {
          method: 'DELETE',
          headers: {
              'Content-Type': 'application/json',
