@@ -74,12 +74,12 @@ public class UserDAOImpl implements UserDAO {
             session = FactorySession.openSession();
             User user = (User) session.get(User.class, name);
             if (user != null) {
-                user.setJumpPotions(JumpPotions);
-                user.setSpeedPotions(SpeedPotions);
-                user.setMaxHealthPotions(MaxHealthPotions);
-                user.setAttackSpeedPotions(AttackSpeedPotions);
-                session.update(user);
-                result = 1;
+//                user.setJumpPotions(JumpPotions);
+//                user.setSpeedPotions(SpeedPotions);
+//                user.setMaxHealthPotions(MaxHealthPotions);
+//                user.setAttackSpeedPotions(AttackSpeedPotions);
+//                session.update(user);
+//                result = 1;
             }
         } catch (Exception e) {
             // LOG

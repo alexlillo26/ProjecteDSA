@@ -32,7 +32,7 @@ public class User {
         this.isAdmin = isAdmin;
     }
 
-    public User(String username, String password, String isAdmin, String fullName, String email, int age, String profilePicture, int coins, String partida, float jumpPotions, float speedPotions, float maxHealthPotions, float attackSpeedPotions) {
+    public User(String username, String password, String isAdmin, String fullName, String email, int age, String profilePicture, int coins, String partida) {
         this(username, password, isAdmin);
         this.fullName = fullName;
         this.email = email;
@@ -40,10 +40,6 @@ public class User {
         this.profilePicture = profilePicture;
         this.coins = coins;
         this.partida = partida;
-        this.JumpPotions = jumpPotions;
-        this.SpeedPotions = speedPotions;
-        this.MaxHealthPotions = maxHealthPotions;
-        this.AttackSpeedPotions = attackSpeedPotions;
     }
 
 
