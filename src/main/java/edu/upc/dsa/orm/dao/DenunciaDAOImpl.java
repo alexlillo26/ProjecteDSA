@@ -12,6 +12,7 @@ public class DenunciaDAOImpl implements DenunciaDAO {
     public DenunciaDAOImpl(Session session) {
     }
 
+
     @Override
     public String addDenuncia(String title, String message, String sender) {
         Session session = null;
