@@ -1,5 +1,7 @@
 package edu.upc.dsa.orm.dao;
 
+import edu.upc.dsa.DBUtils;
+import edu.upc.dsa.models.Item;
 import edu.upc.dsa.models.User;
 import edu.upc.dsa.orm.FactorySession;
 import edu.upc.dsa.orm.dao.UserDAO;
@@ -8,6 +10,10 @@ import edu.upc.dsa.orm.Session;
 import edu.upc.dsa.models.levels;
 
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.util.ArrayList;
 import java.util.List;
 
 public class UserDAOImpl implements UserDAO {
@@ -109,6 +115,48 @@ public class UserDAOImpl implements UserDAO {
             }
         }
         return result;
+    }
+
+    public List<Item> getUserInventory (String name){
+        String sql = "SELECT i.id as itemId, i.name, i.description, i.price, i.imageUrl, SUM(ui.quantity) as totalQuantity " +
+                "FROM User u " +
+                "JOIN User_Item ui ON u.id = ui.user_id " +
+                "JOIN Item i ON ui.item_id = i.id " +
+                "WHERE u.username = ? " +
+                "GROUP BY i.id";
+
+        // Manejo automático de recursos con try-with-resources
+        try (Connection connection = DBUtils.getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+
+            statement.setString(1, name);
+            try (ResultSet resultSet = statement.executeQuery()) {
+                List<Item> items = new ArrayList<>();
+
+                while (resultSet.next()) {
+                    String itemId = resultSet.getString("itemId");
+                    String itemName = resultSet.getString("name");
+                    String itemDescription = resultSet.getString("description");
+                    int itemPrice = resultSet.getInt("price");
+                    String itemImageUrl = resultSet.getString("imageUrl");
+                    int totalQuantity = resultSet.getInt("totalQuantity");
+
+                    // Crear y añadir el objeto Item
+                    Item item = new Item(itemId, itemName, itemDescription, itemPrice, itemImageUrl);
+                    item.setQuantity(totalQuantity);
+                    items.add(item);
+                }
+
+                // Si no se encontraron items
+                return items;
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
+
     }
 
     @Override

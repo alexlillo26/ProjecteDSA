@@ -268,13 +268,25 @@ public class UserService extends Application {
                     level = "level3";
                 }
                 User user1 = userDAO.getUserbyName(new User(partes[1], null, null));
+                List<Item> ITEMS = userDAO.getUserInventory(partes[1]);
                 levels Level = new levels();
                 Level.setLevelData(userDAO.getlevel(level).getLevelData());
                 Partida partida = gsonpartida(Level.getLevelData());
-                partida.JumpPotions = user1.getJumpPotions();
-                partida.SpeedPotions = user1.getSpeedPotions();
-                partida.MaxHealthPotions = user1.getMaxHealthPotions();
-                partida.AttackSpeedPotions = user1.getAttackSpeedPotions();
+                for (int i = 0; i < ITEMS.size(); i++) {
+                    if (ITEMS.get(i).getId().equals("SpeedPotions")) {
+                        partida.SpeedPotions = ITEMS.get(i).getQuantity();
+                    }
+                    if (ITEMS.get(i).getId().equals("MaxHealthPotions")) {
+                        partida.MaxHealthPotions = ITEMS.get(i).getQuantity();
+                    }
+                    if (ITEMS.get(i).getId().equals("AttackSpeedPotions")) {
+                        partida.AttackSpeedPotions = ITEMS.get(i).getQuantity();
+                    }
+                    if (ITEMS.get(i).getId().equals("JumpPotions")) {
+                        partida.JumpPotions = ITEMS.get(i).getQuantity();
+                    }
+                }
+
                 Level.setLevelData(partida.toJson());
 
                 return Response.status(Response.Status.OK).entity(Level.getLevelData()).build();
@@ -290,13 +302,28 @@ public class UserService extends Application {
         else {
 
 
+            List<Item> ITEMS = userDAO.getUserInventory(partes[0]);
 
             Partida partida = gsonpartida(user.getPartida());
 
-            partida.JumpPotions = user.getJumpPotions();
-            partida.SpeedPotions = user.getSpeedPotions();
-            partida.MaxHealthPotions = user.getMaxHealthPotions();
-            partida.AttackSpeedPotions = user.getAttackSpeedPotions();
+            for (int i = 0; i < ITEMS.size(); i++) {
+                if (ITEMS.get(i).getId().equals("SpeedPotions")) {
+                    partida.SpeedPotions = ITEMS.get(i).getQuantity();
+                }
+                if (ITEMS.get(i).getId().equals("MaxHealthPotions")) {
+                    partida.MaxHealthPotions = ITEMS.get(i).getQuantity();
+                }
+                if (ITEMS.get(i).getId().equals("AttackSpeedPotions")) {
+                    partida.AttackSpeedPotions = ITEMS.get(i).getQuantity();
+                }
+                if (ITEMS.get(i).getId().equals("JumpPotions")) {
+                    partida.JumpPotions = ITEMS.get(i).getQuantity();
+                }
+            }
+//            partida.JumpPotions = user.getJumpPotions();
+//            partida.SpeedPotions = user.getSpeedPotions();
+//            partida.MaxHealthPotions = user.getMaxHealthPotions();
+//            partida.AttackSpeedPotions = user.getAttackSpeedPotions();
 
             String partide = partida.toJson();
             return Response.status(Response.Status.OK).entity(partide).build();
@@ -487,11 +514,50 @@ public Response saveGame(String level) {
        if (resultado.equals("You Win"))
        {
            Partida partida1 = gsonpartida(level);
-           float SpeedPotions = partida1.SpeedPotions;
-           float JumpPotions = partida1.JumpPotions;
-           float MaxHealthPotions = partida1.MaxHealthPotions;
-           float AttackSpeedPotions = partida1.AttackSpeedPotions;
-           userDAO.updateUserPotions(user.getId(), JumpPotions, SpeedPotions, MaxHealthPotions, AttackSpeedPotions);
+           List<Item> ITEMS = userDAO.getUserInventory(partes[0]);
+           int SpeedPotions = 0;
+           int JumpPotions = 0;
+           int MaxHealthPotions = 0;
+           int AttackSpeedPotions= 0;
+           for (int i = 0; i < ITEMS.size(); i++) {
+               if (ITEMS.get(i).getId().equals("SpeedPotions")) {
+                   SpeedPotions = ITEMS.get(i).getQuantity();
+               }
+               if (ITEMS.get(i).getId().equals("MaxHealthPotions")) {
+                   MaxHealthPotions = ITEMS.get(i).getQuantity();
+               }
+               if (ITEMS.get(i).getId().equals("AttackSpeedPotions")) {
+                   AttackSpeedPotions = ITEMS.get(i).getQuantity();
+               }
+               if (ITEMS.get(i).getId().equals("JumpPotions")) {
+                   JumpPotions = ITEMS.get(i).getQuantity();
+               }
+           }
+
+           User_Item userItem = new User_Item(user.getId(), "SpeedPotions", SpeedPotions *-1);
+           User_Item userItem1 = new User_Item(user.getId(), "MaxHealthPotions", MaxHealthPotions *-1);
+           User_Item userItem2 = new User_Item(user.getId(), "AttackSpeedPotions", AttackSpeedPotions*-1);
+           User_Item userItem3 = new User_Item(user.getId(), "JumpPotions", JumpPotions*-1);
+
+           User_Item userItem4 = new User_Item(user.getId(), "SpeedPotions", (int) partida1.SpeedPotions);
+           User_Item userItem5 = new User_Item(user.getId(), "MaxHealthPotions", (int) partida1.MaxHealthPotions);
+           User_Item userItem6 = new User_Item(user.getId(), "AttackSpeedPotions", (int) partida1.AttackSpeedPotions);
+           User_Item userItem7 = new User_Item(user.getId(), "JumpPotions", (int) partida1.JumpPotions);
+
+
+
+           // Insertar la compra en la tabla user_item
+           UserItemDAO.insertUserItem(userItem);
+           UserItemDAO.insertUserItem(userItem1);
+           UserItemDAO.insertUserItem(userItem2);
+           UserItemDAO.insertUserItem(userItem3);
+           UserItemDAO.insertUserItem(userItem4);
+           UserItemDAO.insertUserItem(userItem5);
+           UserItemDAO.insertUserItem(userItem6);
+           UserItemDAO.insertUserItem(userItem7);
+
+           //userDAO.updateUserPotions(user.getId(), JumpPotions, SpeedPotions, MaxHealthPotions, AttackSpeedPotions);
+
            int coins = userDAO.getUserbyName(new User(nombre, null, null)).getCoins();
            coins = coins + partida1.coinsCount;
            userDAO.updateUserCoins(user.getId(), coins);
@@ -501,22 +567,97 @@ public Response saveGame(String level) {
        if (resultado.equals("Game Over"))
        {
            Partida partida1 = gsonpartida(level);
-           float SpeedPotions = partida1.SpeedPotions;
-           float JumpPotions = partida1.JumpPotions;
-           float MaxHealthPotions = partida1.MaxHealthPotions;
-           float AttackSpeedPotions = partida1.AttackSpeedPotions;
-           userDAO.updateUserPotions(user.getId(), JumpPotions, SpeedPotions, MaxHealthPotions, AttackSpeedPotions);
+           List<Item> ITEMS = userDAO.getUserInventory(partes[0]);
+           int SpeedPotions = 0;
+           int JumpPotions = 0;
+           int MaxHealthPotions = 0;
+           int AttackSpeedPotions= 0;
+           for (int i = 0; i < ITEMS.size(); i++) {
+               if (ITEMS.get(i).getId().equals("SpeedPotions")) {
+                   SpeedPotions = ITEMS.get(i).getQuantity();
+               }
+               if (ITEMS.get(i).getId().equals("MaxHealthPotions")) {
+                   MaxHealthPotions = ITEMS.get(i).getQuantity();
+               }
+               if (ITEMS.get(i).getId().equals("AttackSpeedPotions")) {
+                   AttackSpeedPotions = ITEMS.get(i).getQuantity();
+               }
+               if (ITEMS.get(i).getId().equals("JumpPotions")) {
+                   JumpPotions = ITEMS.get(i).getQuantity();
+               }
+           }
+
+           User_Item userItem = new User_Item(user.getId(), "SpeedPotions", SpeedPotions *-1);
+           User_Item userItem1 = new User_Item(user.getId(), "MaxHealthPotions", MaxHealthPotions *-1);
+           User_Item userItem2 = new User_Item(user.getId(), "AttackSpeedPotions", AttackSpeedPotions*-1);
+           User_Item userItem3 = new User_Item(user.getId(), "JumpPotions", JumpPotions*-1);
+
+           User_Item userItem4 = new User_Item(user.getId(), "SpeedPotions", (int) partida1.SpeedPotions);
+           User_Item userItem5 = new User_Item(user.getId(), "MaxHealthPotions", (int) partida1.MaxHealthPotions);
+           User_Item userItem6 = new User_Item(user.getId(), "AttackSpeedPotions", (int) partida1.AttackSpeedPotions);
+           User_Item userItem7 = new User_Item(user.getId(), "JumpPotions", (int) partida1.JumpPotions);
+
+
+
+           // Insertar la compra en la tabla user_item
+           UserItemDAO.insertUserItem(userItem);
+           UserItemDAO.insertUserItem(userItem1);
+           UserItemDAO.insertUserItem(userItem2);
+           UserItemDAO.insertUserItem(userItem3);
+           UserItemDAO.insertUserItem(userItem4);
+           UserItemDAO.insertUserItem(userItem5);
+           UserItemDAO.insertUserItem(userItem6);
+           UserItemDAO.insertUserItem(userItem7);
+           //userDAO.updateUserPotions(user.getId(), JumpPotions, SpeedPotions, MaxHealthPotions, AttackSpeedPotions);
            userDAO.updateUserPartida(nombre, "");
            return Response.status(200).entity("{\"message\": \" S'ha guardat correctament\"}").build();
        }
        else{
            try{
                Partida partida1 = gsonpartida(level);
-               float SpeedPotions = partida1.SpeedPotions;
-               float JumpPotions = partida1.JumpPotions;
-               float MaxHealthPotions = partida1.MaxHealthPotions;
-               float AttackSpeedPotions = partida1.AttackSpeedPotions;
-               userDAO.updateUserPotions(user.getId(), JumpPotions, SpeedPotions, MaxHealthPotions, AttackSpeedPotions);
+               List<Item> ITEMS = userDAO.getUserInventory(partes[0]);
+               int SpeedPotions = 0;
+               int JumpPotions = 0;
+               int MaxHealthPotions = 0;
+               int AttackSpeedPotions= 0;
+               for (int i = 0; i < ITEMS.size(); i++) {
+                   if (ITEMS.get(i).getId().equals("SpeedPotions")) {
+                       SpeedPotions = ITEMS.get(i).getQuantity();
+                   }
+                   if (ITEMS.get(i).getId().equals("MaxHealthPotions")) {
+                       MaxHealthPotions = ITEMS.get(i).getQuantity();
+                   }
+                   if (ITEMS.get(i).getId().equals("AttackSpeedPotions")) {
+                       AttackSpeedPotions = ITEMS.get(i).getQuantity();
+                   }
+                   if (ITEMS.get(i).getId().equals("JumpPotions")) {
+                       JumpPotions = ITEMS.get(i).getQuantity();
+                   }
+               }
+
+               User_Item userItem = new User_Item(user.getId(), "SpeedPotions", SpeedPotions *-1);
+                User_Item userItem1 = new User_Item(user.getId(), "MaxHealthPotions", MaxHealthPotions *-1);
+                User_Item userItem2 = new User_Item(user.getId(), "AttackSpeedPotions", AttackSpeedPotions*-1);
+                User_Item userItem3 = new User_Item(user.getId(), "JumpPotions", JumpPotions*-1);
+
+                User_Item userItem4 = new User_Item(user.getId(), "SpeedPotions", (int) partida1.SpeedPotions);
+               User_Item userItem5 = new User_Item(user.getId(), "MaxHealthPotions", (int) partida1.MaxHealthPotions);
+               User_Item userItem6 = new User_Item(user.getId(), "AttackSpeedPotions", (int) partida1.AttackSpeedPotions);
+               User_Item userItem7 = new User_Item(user.getId(), "JumpPotions", (int) partida1.JumpPotions);
+
+
+
+               // Insertar la compra en la tabla user_item
+               UserItemDAO.insertUserItem(userItem);
+                UserItemDAO.insertUserItem(userItem1);
+                UserItemDAO.insertUserItem(userItem2);
+                UserItemDAO.insertUserItem(userItem3);
+                UserItemDAO.insertUserItem(userItem4);
+                UserItemDAO.insertUserItem(userItem5);
+                UserItemDAO.insertUserItem(userItem6);
+                UserItemDAO.insertUserItem(userItem7);
+
+               //userDAO.updateUserPotions(user.getId(), JumpPotions, SpeedPotions, MaxHealthPotions, AttackSpeedPotions);
                userDAO.updateUserPartida(nombre, level);
                return Response.status(200).entity("{\"message\": \" S'ha guardat correctament\"}").build();
 
