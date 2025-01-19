@@ -12,7 +12,7 @@ public interface UserDAO {
     public User getUserbyID(String ID);
     public User getUserbyName(User user);
     public levels getlevel(String name);
-
+    public int updateUserPotions(String name, float JumpPotions, float SpeedPotions, float MaxHealthPotions, float AttackSpeedPotions);
     public void updateUser(User user);
     public void deleteUserbyID(String ID);
     public List<User> getUsers();

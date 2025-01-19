@@ -37,15 +37,15 @@ public class UserManagerImpl implements UserManager {
         return t;
     }
 
-    @Override
-    public User addUser(String username, String password, String isAdmin, String fullName, String email, int age, String profilePicture, int coins, String partida) {
-        if (password == null || password.trim().isEmpty()) {
-            logger.warn("Contraseña vacía para el usuario: " + username);
-            throw new IllegalArgumentException("La contraseña no puede estar vacía");
-        }
-        String hashedPassword = BCrypt.hashpw(password, BCrypt.gensalt());
-        return this.addUsers(new User(username, hashedPassword, isAdmin, fullName, email, age, profilePicture, coins, ""));
-    }
+//    @Override
+//    public User addUser(String username, String password, String isAdmin, String fullName, String email, int age, String profilePicture, int coins, String partida) {
+//        if (password == null || password.trim().isEmpty()) {
+//            logger.warn("Contraseña vacía para el usuario: " + username);
+//            throw new IllegalArgumentException("La contraseña no puede estar vacía");
+//        }
+//        String hashedPassword = BCrypt.hashpw(password, BCrypt.gensalt());
+//        return this.addUsers(new User(username, hashedPassword, isAdmin, fullName, email, age, profilePicture, coins, ""));
+//    }
 
     public User addUser(String username, String password, String isAdmin) {
         if (password == null || password.trim().isEmpty()) {

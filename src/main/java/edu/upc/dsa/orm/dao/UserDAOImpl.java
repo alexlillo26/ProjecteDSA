@@ -86,6 +86,32 @@ public class UserDAOImpl implements UserDAO {
     }
 
     @Override
+    public int updateUserPotions(String name, float JumpPotions, float SpeedPotions, float MaxHealthPotions, float AttackSpeedPotions) {
+        Session session = null;
+        int result = 0;
+        try {
+            session = FactorySession.openSession();
+            User user = (User) session.get(User.class, name);
+            if (user != null) {
+                user.setJumpPotions(JumpPotions);
+                user.setSpeedPotions(SpeedPotions);
+                user.setMaxHealthPotions(MaxHealthPotions);
+                user.setAttackSpeedPotions(AttackSpeedPotions);
+                session.update(user);
+                result = 1;
+            }
+        } catch (Exception e) {
+            // LOG
+            result = -1;
+        } finally {
+            if (session != null) {
+                session.close();
+            }
+        }
+        return result;
+    }
+
+    @Override
     public User getUserbyID(String ID) {
         Session session = null;
         User user = null;

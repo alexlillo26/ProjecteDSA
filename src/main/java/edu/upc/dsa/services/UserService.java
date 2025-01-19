@@ -1,9 +1,11 @@
 
 package edu.upc.dsa.services;
 
+import com.google.gson.Gson;
 import edu.upc.dsa.*;
 import edu.upc.dsa.models.*;
 import edu.upc.dsa.orm.dao.ItemDaoImpl;
+import edu.upc.dsa.orm.dao.UserDAO;
 import edu.upc.dsa.orm.dao.UserItemDAOImpl;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -252,6 +254,8 @@ public class UserService extends Application {
     @Path("/{username}/partidas")
     @Produces(MediaType.TEXT_PLAIN)
     public Response getGame(@PathParam("username") String username) {
+        String [] partes = username.split("\\|");
+        username = partes[0];
         User user = userDAO.getUserbyName(new User(username, null, null));
         if (user == null) {
             if (username.equals("Solicitud_de_partida_001") || username.equals("Solicitud_de_partida_002") || username.equals("Solicitud_de_partida_003")) {
@@ -263,8 +267,16 @@ public class UserService extends Application {
                 } else {
                     level = "level3";
                 }
+                User user1 = userDAO.getUserbyName(new User(partes[1], null, null));
                 levels Level = new levels();
                 Level.setLevelData(userDAO.getlevel(level).getLevelData());
+                Partida partida = gsonpartida(Level.getLevelData());
+                partida.JumpPotions = user1.getJumpPotions();
+                partida.SpeedPotions = user1.getSpeedPotions();
+                partida.MaxHealthPotions = user1.getMaxHealthPotions();
+                partida.AttackSpeedPotions = user1.getAttackSpeedPotions();
+                Level.setLevelData(partida.toJson());
+
                 return Response.status(Response.Status.OK).entity(Level.getLevelData()).build();
             }
             logger.warn("Usuario no encontrado: " + username);
@@ -272,11 +284,22 @@ public class UserService extends Application {
                     .entity("{\"message\": \"Usuario no encontrado\"}")
                     .build();
         }
-        if(user.getPartida() == "") {
+        if(user.getPartida().equals("") || user.getPartida().length() < 7) {
             return Response.status(Response.Status.OK).entity("").build();
         }
         else {
-            return Response.status(Response.Status.OK).entity(user.getPartida()).build();
+
+
+
+            Partida partida = gsonpartida(user.getPartida());
+
+            partida.JumpPotions = user.getJumpPotions();
+            partida.SpeedPotions = user.getSpeedPotions();
+            partida.MaxHealthPotions = user.getMaxHealthPotions();
+            partida.AttackSpeedPotions = user.getAttackSpeedPotions();
+
+            String partide = partida.toJson();
+            return Response.status(Response.Status.OK).entity(partide).build();
         }
 
     }
@@ -456,20 +479,55 @@ public Response saveGame(String level) {
        }
 
         String[] partes = level.split("\\|");
-       level = cleanJsonString(partes[1]);
-       String parte1 = partes[0];
-       String parte2 = level;
+       level = cleanJsonString(partes[2]);
+       String nombre = partes[0];
+       String resultado = partes[1];
+       String partida = partes[2];
+       User user = userDAO.getUserbyName(new User(nombre, null, null));
+       if (resultado.equals("You Win"))
+       {
+           Partida partida1 = gsonpartida(level);
+           float SpeedPotions = partida1.SpeedPotions;
+           float JumpPotions = partida1.JumpPotions;
+           float MaxHealthPotions = partida1.MaxHealthPotions;
+           float AttackSpeedPotions = partida1.AttackSpeedPotions;
+           userDAO.updateUserPotions(user.getId(), JumpPotions, SpeedPotions, MaxHealthPotions, AttackSpeedPotions);
+           int coins = userDAO.getUserbyName(new User(nombre, null, null)).getCoins();
+           coins = coins + partida1.coinsCount;
+           userDAO.updateUserCoins(user.getId(), coins);
+           userDAO.updateUserPartida(nombre, "");
+           return Response.status(200).entity("{\"message\": \" S'ha guardat correctament\"}").build();
+       }
+       if (resultado.equals("Game Over"))
+       {
+           Partida partida1 = gsonpartida(level);
+           float SpeedPotions = partida1.SpeedPotions;
+           float JumpPotions = partida1.JumpPotions;
+           float MaxHealthPotions = partida1.MaxHealthPotions;
+           float AttackSpeedPotions = partida1.AttackSpeedPotions;
+           userDAO.updateUserPotions(user.getId(), JumpPotions, SpeedPotions, MaxHealthPotions, AttackSpeedPotions);
+           userDAO.updateUserPartida(nombre, "");
+           return Response.status(200).entity("{\"message\": \" S'ha guardat correctament\"}").build();
+       }
+       else{
+           try{
+               Partida partida1 = gsonpartida(level);
+               float SpeedPotions = partida1.SpeedPotions;
+               float JumpPotions = partida1.JumpPotions;
+               float MaxHealthPotions = partida1.MaxHealthPotions;
+               float AttackSpeedPotions = partida1.AttackSpeedPotions;
+               userDAO.updateUserPotions(user.getId(), JumpPotions, SpeedPotions, MaxHealthPotions, AttackSpeedPotions);
+               userDAO.updateUserPartida(nombre, level);
+               return Response.status(200).entity("{\"message\": \" S'ha guardat correctament\"}").build();
+
+           } catch (Exception e) {
+               logger.error("Error creating level: " + e.getMessage(), e);
+               return Response.status(500).entity("{\"message\": \"Internal server error\"}").build();
+           }
+       }
 
 
-    levels level1 = new levels("level1", parte2);
-    try{
-        userDAO.updateUserPartida(parte1, parte2);
-        return Response.status(500).entity("{\"message\": \"Validation Error\"}").build();
 
-    } catch (Exception e) {
-        logger.error("Error creating level: " + e.getMessage(), e);
-        return Response.status(500).entity("{\"message\": \"Internal server error\"}").build();
-    }
 
 
 }
@@ -573,5 +631,10 @@ public Response saveGame(String level) {
                     .entity("{\"message\": \"Error interno del servidor\"}")
                     .build();
         }
+    }
+    public Partida gsonpartida(String jsonPartida) {
+        Gson gson = new Gson();
+        Partida partida = gson.fromJson(jsonPartida, Partida.class);
+        return partida;
     }
 }
