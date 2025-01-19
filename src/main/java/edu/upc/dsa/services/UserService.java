@@ -289,6 +289,7 @@ public class UserService extends Application {
 
                 Level.setLevelData(partida.toJson());
 
+
                 return Response.status(Response.Status.OK).entity(Level.getLevelData()).build();
             }
             logger.warn("Usuario no encontrado: " + username);
