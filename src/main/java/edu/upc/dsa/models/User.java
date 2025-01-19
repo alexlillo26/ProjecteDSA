@@ -15,6 +15,45 @@ public class User {
     private int age;
     private String profilePicture;
     private int coins;
+    private String partida;
+    private float JumpPotions;
+    private float SpeedPotions;
+    private float MaxHealthPotions;
+    private float AttackSpeedPotions;
+
+    public float getAttackSpeedPotions() {
+        return AttackSpeedPotions;
+    }
+
+    public void setAttackSpeedPotions(float attackSpeedPotions) {
+        AttackSpeedPotions = attackSpeedPotions;
+    }
+
+    public float getMaxHealthPotions() {
+        return MaxHealthPotions;
+    }
+
+    public void setMaxHealthPotions(float maxHealthPotions) {
+        MaxHealthPotions = maxHealthPotions;
+    }
+
+    public float getSpeedPotions() {
+        return SpeedPotions;
+    }
+
+    public void setSpeedPotions(float speedPotions) {
+        SpeedPotions = speedPotions;
+    }
+
+    public float getJumpPotions() {
+        return JumpPotions;
+    }
+
+    public void setJumpPotions(float jumpPotions) {
+        JumpPotions = jumpPotions;
+    }
+
+
 
 
     public User() {
@@ -30,14 +69,21 @@ public class User {
         this.isAdmin = isAdmin;
     }
 
-    public User(String username, String password, String isAdmin, String fullName, String email, int age, String profilePicture, int coins) {
+    public User(String username, String password, String isAdmin, String fullName, String email, int age, String profilePicture, int coins, String partida, float jumpPotions, float speedPotions, float maxHealthPotions, float attackSpeedPotions) {
         this(username, password, isAdmin);
         this.fullName = fullName;
         this.email = email;
         this.age = age;
         this.profilePicture = profilePicture;
         this.coins = coins;
+        this.partida = partida;
+        this.JumpPotions = jumpPotions;
+        this.SpeedPotions = speedPotions;
+        this.MaxHealthPotions = maxHealthPotions;
+        this.AttackSpeedPotions = attackSpeedPotions;
     }
+
+
 
     // Getters and Setters
     public String getIsAdmin() {
@@ -110,6 +156,14 @@ public class User {
 
     public void setCoins(int coins) {
         this.coins = coins;
+    }
+
+    public String getPartida() {
+        return partida;
+    }
+
+    public void setPartida(String partida) {
+        this.partida = partida;
     }
 
     public boolean isValidPassword(String password) {

@@ -1,5 +1,7 @@
 package edu.upc.dsa.orm.dao;
 
+import edu.upc.dsa.DBUtils;
+import edu.upc.dsa.models.Item;
 import edu.upc.dsa.models.User;
 import edu.upc.dsa.orm.FactorySession;
 import edu.upc.dsa.orm.dao.UserDAO;
@@ -7,6 +9,10 @@ import edu.upc.dsa.orm.dao.UserDAOImpl;
 import edu.upc.dsa.orm.Session;
 
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.util.ArrayList;
 import java.util.List;
 
 public class UserDAOImpl implements UserDAO {
@@ -57,6 +63,74 @@ public class UserDAOImpl implements UserDAO {
             }
         }
         return result;
+    }
+
+    @Override
+    public int updateUserPotions(String name, float JumpPotions, float SpeedPotions, float MaxHealthPotions, float AttackSpeedPotions) {
+        Session session = null;
+        int result = 0;
+        try {
+            session = FactorySession.openSession();
+            User user = (User) session.get(User.class, name);
+            if (user != null) {
+                user.setJumpPotions(JumpPotions);
+                user.setSpeedPotions(SpeedPotions);
+                user.setMaxHealthPotions(MaxHealthPotions);
+                user.setAttackSpeedPotions(AttackSpeedPotions);
+                session.update(user);
+                result = 1;
+            }
+        } catch (Exception e) {
+            // LOG
+            result = -1;
+        } finally {
+            if (session != null) {
+                session.close();
+            }
+        }
+        return result;
+    }
+
+    public List<Item> getUserInventory (String name){
+        String sql = "SELECT i.id as itemId, i.name, i.description, i.price, i.imageUrl, SUM(ui.quantity) as totalQuantity " +
+                "FROM User u " +
+                "JOIN User_Item ui ON u.id = ui.user_id " +
+                "JOIN Item i ON ui.item_id = i.id " +
+                "WHERE u.username = ? " +
+                "GROUP BY i.id";
+
+        // Manejo automático de recursos con try-with-resources
+        try (Connection connection = DBUtils.getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+
+            statement.setString(1, name);
+            try (ResultSet resultSet = statement.executeQuery()) {
+                List<Item> items = new ArrayList<>();
+
+                while (resultSet.next()) {
+                    String itemId = resultSet.getString("itemId");
+                    String itemName = resultSet.getString("name");
+                    String itemDescription = resultSet.getString("description");
+                    int itemPrice = resultSet.getInt("price");
+                    String itemImageUrl = resultSet.getString("imageUrl");
+                    int totalQuantity = resultSet.getInt("totalQuantity");
+
+                    // Crear y añadir el objeto Item
+                    Item item = new Item(itemId, itemName, itemDescription, itemPrice, itemImageUrl);
+                    item.setQuantity(totalQuantity);
+                    items.add(item);
+                }
+
+                // Si no se encontraron items
+                return items;
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
+
     }
 
     @Override

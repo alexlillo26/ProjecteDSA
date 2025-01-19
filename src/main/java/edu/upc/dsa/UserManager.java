@@ -6,7 +6,7 @@ import edu.upc.dsa.models.User;
 import java.util.List;
 
 public interface UserManager {
-    public User addUser(String username, String password, String isAdmin, String fullName, String email, int age, String profilePicture, int coins);
+    //public User addUser(String username, String password, String isAdmin, String fullName, String email, int age, String profilePicture, int coins, String partida);
     public User addUser(String username, String password, String isAdmin);
     public User addUsers(User user);
     public User getUser(String id);
