@@ -1,6 +1,6 @@
 package edu.upc.dsa.models;
 
-public class Question {
+public class Denuncia {
     private String title;
     private String message;
     private String sender;
